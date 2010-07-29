@@ -1,23 +1,28 @@
 local trashHold = 250
-local port = 0
-
 local params = {}
 
+-- Initializes the ADC and set parameters
+function init()
+  -- Global parameters
+  params.blocking = 0
+  params.clock = 4
+  params.buffer = 4
 
---[[
-local max1
-local min1
-local pos1
-local objective1
-local max2
-local min2
-local pos2
-local objective2
-local max3
-local min3
-local pos3
-local objective3
-]]
+  -- Motor 0
+  params.max0 = 0
+  params.min0 = 0
+  params.pos0 = 0
+  params.objective0 = 0
+
+  -- ADC 0
+  ADCConfig( 0 )
+end
+
+-- Configure ADC
+function ADCConfig( id )
+  adc.setblocking( id, params.blocking )
+  adc.setsmoothing( id, params.smoothing )
+end
 
 -- Returns a position for a given adc value
 function scaleIn( max, min, in )
