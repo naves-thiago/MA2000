@@ -1,3 +1,11 @@
+----------------------------------------------------------
+--          MA2000 Robotic Arm Control Code             --
+--                                                      --
+--                      Version 0.1                     --
+--                                                      --
+--         By Thiago Naves, Led Lab, PUC-Rio            --
+----------------------------------------------------------
+
 local trashHold = 250
 local params = {}
 
@@ -7,12 +15,15 @@ function init()
   params.blocking = 0
   params.clock = 4
   params.buffer = 4
+  params.pwm_clock = 50000
 
   -- Motor 0
   params.max0 = 0
   params.min0 = 0
   params.pos0 = 0
   params.objective0 = 0
+  params.pwm0 = 5
+  params.dir0 = pio.pin.PB7
 
   -- ADC 0
   ADCConfig( 0 )
@@ -25,13 +36,18 @@ function ADCConfig( id )
 end
 
 -- Returns a position for a given adc value
-function scaleIn( max, min, in )
+function adcToPos( max, min, in )
   return ( in - min ) * 1000 / ( max - min )
 end
 
 -- Returns expected adc value for a given position
-function scaleOut( max, min, out )
+function posToAdc( max, min, out )
   return out * ( max - min ) / 1000 + min
+end
+
+-- Scales internal values to the 0~99 range for the PWM
+function scalePWM( value )
+ -- 
 end
 
 -- Returns the distance between the current position and destination
@@ -57,4 +73,27 @@ function calcSpeed( dist )
   end
 end
 
+-- Sets pwm and direction pin values
+function out( motor, value )
+  local pwmp, dirp -- PWM and Direction pins
+
+  pwmp = params[ "pwm" .. motor ]
+  
+  if value == 0 then
+    pwm.stop( pwmp )
+  else
+    dirp = params[ "dir" .. motor ]
+
+    -- Sets direction pin
+    if value < 0 then
+      pio.pin.sethigh( dirp )
+    else
+      pio.pin.setlow( dirp )
+    end
+
+    -- Sets PWM
+    pwm.setup( pwmp, params.pwm_clock, abs( value ) )
+    pwm.start( pwmp )
+  end
+end
 
