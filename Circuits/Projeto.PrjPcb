@@ -30,7 +30,7 @@ DItemRevisionGUID=
 DocumentPath=Sheet1.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
+AnnotationIndexControlEnabled=1
 AnnotateSuffix=
 AnnotateScope=All
 AnnotateOrder=1
@@ -197,6 +197,8 @@ OutputName1=Mixed Sim
 OutputDocumentPath1=
 OutputVariantName1=
 OutputDefault1=0
+Configuration1_Name1=OutputConfigurationParameter1
+Configuration1_Item1=Record=AdvSimNetlistView|SheetsToNetlist=1|NetlistType=1|AnalysesDataSavedIndex=2|SimView_KeepLastSetup=True|DC_Analysis=False|DC_PrimarySource= |DC_PrimaryStart=0|DC_PrimaryStop=0|DC_PrimaryStep=0|DC_EnableSecondary=False|DC_SecondarySource= |DC_SecondaryStart=0|DC_SecondaryStop=0|DC_SecondaryStep=0|AC_Analysis=False|AC_SweepType=LIN|AC_StartFrequency=1|AC_StopFrequency=1E6|AC_TestPoints=100|AC_FreqDomain=S|TRAN_Analysis=True|TRAN_AlwaysSetDefaults=True|TRAN_DefaultCycles=5|TRAN_DefaultPointsPerCycle=50|TRAN_StartTime=0|TRAN_StopTime=5E-6|TRAN_StepTime=2E-8|TRAN_MaxStepTime=2E-8|TRAN_FourierFundFreq=1E6|TRAN_FourierNumHarmonics=10|TRAN_FourierAnalysis=False|TRAN_UseInitialConditions=False|TF_Analysis=False|TF_Source= |TF_Reference=0|PZ_Analysis=False|PZ_Node1= |PZ_Node2=0|PZ_Node3= |PZ_Node4=0|PZ_TfType=VOL|PZ_AnalType=PZ|Noise_Analysis=False|Noise_Source= |Noise_Output= |Noise_Reference=0|Noise_Start=0|Noise_Stop=0|Noise_TestPoints=0|Noise_PointsPerSummary=0|Noise_SweepType=LIN|Op_Analysis=True|POP_Analysis=False|POP_TriggerCondition=0_TO_1|POP_MaxPeriod=0.0001|POP_ShowProgress=False|POP_MaxIterations=20|POP_Convergence=1E-14|POP_UseTransientSnapshot=False|POP_OutputCycles=5|POP_CyclesBeforeLaunch=5|ParamSweep_Analysis=False|ParamSweep_Parameter1= |ParamSweep_Start1=0|ParamSweep_Stop1=0|ParamSweep_Step1=0|ParamSweep_SweepType1=False|ParamSweep_SecondaryEnabled=False|ParamSweep_Parameter2= |ParamSweep_Start2=0|ParamSweep_Stop2=0|ParamSweep_Step2=0|ParamSweep_SweepType2=False|TempSweep_Analysis=False|TempSweep_Start=0|TempSweep_Stop=0|TempSweep_Step=0|MonteCarlo_Analysis=False|MonteCarlo_Seed=-1|MonteCarlo_DistributionType=UNIFORM|MonteCarlo_NumberOfRuns=5|MonteCarlo_ResistorTolerance=10%|MonteCarlo_InductorTolerance=10%|MonteCarlo_TransistorTolerance=10%|MonteCarlo_CapacitorTolerance=10%|MonteCarlo_DCSourceTolerance=10%|MonteCarlo_DigitalTpTolerance=10%|OPTION_Method=Trapezoidal|OPTION_DVCC=5.000|OPTION_DVDD=15.00|OPTION_SpiceRefNode=GND
 OutputType2=SIMetrix_Sim
 OutputName2=SIMetrix
 OutputDocumentPath2=
@@ -351,49 +353,51 @@ Name=Report Outputs
 Description=
 TargetPrinter=Microsoft XPS Document Writer
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintWhat=1
-OutputType1=BOM_PartType
-OutputName1=Bill of Materials
+OutputType1=Script
+OutputName1=Script Output
 OutputDocumentPath1=
 OutputVariantName1=
 OutputDefault1=0
-PageOptions1=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-4|MediaType=1|DitherType=10|PaperKind=A4|PrintScaleMode=1
-OutputType2=ComponentCrossReference
-OutputName2=Component Cross Reference Report
+OutputType2=ReportHierarchy
+OutputName2=Report Project Hierarchy
 OutputDocumentPath2=
 OutputVariantName2=
 OutputDefault2=0
-OutputType3=Design Rules Check
-OutputName3=Design Rules Check
+OutputType3=SinglePinNetReporter
+OutputName3=Report Single Pin Nets
 OutputDocumentPath3=
 OutputVariantName3=
 OutputDefault3=0
-PageOptions3=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-4|MediaType=1|DitherType=10|PaperKind=A4|PrintScaleMode=1
-OutputType4=Electrical Rules Check
-OutputName4=Electrical Rules Check
+OutputType4=SimpleBOM
+OutputName4=Simple BOM
 OutputDocumentPath4=
 OutputVariantName4=
 OutputDefault4=0
-PageOptions4=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-4|MediaType=1|DitherType=10|PaperKind=A4|PrintScaleMode=1
-OutputType5=ReportHierarchy
-OutputName5=Report Project Hierarchy
+Configuration4_Name1=OutputConfigurationParameter1
+Configuration4_Item1=Record=SimpleBOMView|SimpleBOMMode=0
+OutputType5=ComponentCrossReference
+OutputName5=Component Cross Reference Report
 OutputDocumentPath5=
 OutputVariantName5=
 OutputDefault5=0
-OutputType6=Script
-OutputName6=Script Output
+OutputType6=BOM_PartType
+OutputName6=Bill of Materials
 OutputDocumentPath6=
 OutputVariantName6=
 OutputDefault6=0
-OutputType7=SimpleBOM
-OutputName7=Simple BOM
+PageOptions6=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-4|MediaType=1|DitherType=10|PaperKind=A4|PrintScaleMode=1
+OutputType7=Electrical Rules Check
+OutputName7=Electrical Rules Check
 OutputDocumentPath7=
 OutputVariantName7=
 OutputDefault7=0
-OutputType8=SinglePinNetReporter
-OutputName8=Report Single Pin Nets
+PageOptions7=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-4|MediaType=1|DitherType=10|PaperKind=A4|PrintScaleMode=1
+OutputType8=Design Rules Check
+OutputName8=Design Rules Check
 OutputDocumentPath8=
 OutputVariantName8=
 OutputDefault8=0
+PageOptions8=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-4|MediaType=1|DitherType=10|PaperKind=A4|PrintScaleMode=1
 
 [OutputGroup7]
 Name=Other Outputs
@@ -797,7 +801,7 @@ L16=WWWWNWWNWWWNWWWNW
 L17=WNNNNNNNWNNNWWWWN
 
 [Annotate]
-SortOrder=3
+SortOrder=1
 MatchParameter1=Comment
 MatchStrictly1=1
 MatchParameter2=Library Reference
