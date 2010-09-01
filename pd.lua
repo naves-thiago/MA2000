@@ -20,13 +20,14 @@ function init()
   params.pwm_clock = 50000
 
   -- Motor 0
-  params.max0 = 550
-  params.min0 = 3
-  params.pos0 = 100
-  params.objective0 = 50
+  params.max0 = 490 
+  params.min0 = 90
+  params.pos0 = 330
+  params.objective0 = 330
   params.pwm0 = 5
 --  params.dir0 = pio.PF_0
   params.dir0 = pio.PC_7
+  params.ndir0 = pio.PC_5
 
   -- ADC 0
   ADCConfig( 0 )
@@ -89,7 +90,7 @@ end
 
 -- Sets pwm and direction pin values
 function out( motor, value )
-  local pwmp, dirp -- PWM and Direction pins
+  local pwmp, dirp, ndirp -- PWM and Direction pins
   local pwm_val = math.abs( value )
 
   if pwm_val == 100 then
@@ -102,12 +103,21 @@ function out( motor, value )
     pwm.stop( pwmp )
   else
     dirp = params[ "dir" .. motor ]
+    ndirp = params[ "ndir" .. motor ]
 
-    -- Sets direction pin
+    -- Sets direction pins
+    -- Avoid shotcut
+    if ( value < 0 ) ~= ( pio.pin[ dirp ] == 1 ) then -- Changed Direction
+      pwm.stop( pwmp )
+    end
+
+    -- Set pins
     if value < 0 then
       pio.pin.sethigh( dirp )
+      pio.pin.setlow( ndirp )
     else
       pio.pin.setlow( dirp )
+      pio.pin.sethigh( ndirp )
     end
 
     -- Sets PWM
