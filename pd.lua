@@ -33,10 +33,12 @@ function init()
   ADCConfig( 0 )
 
   -- PIOs
-  pio.pin.setdir( pio.OUTPUT, params.dir0 )
+  pio.pin.setdir( pio.OUTPUT, params.dir0, params.ndir0 )
+  pio.pin.setlow( params.dir0 )
+  pio.pin.sethigh( params.ndir0 )
 
   -- Run
-  run()
+--  run()
 end
 
 -- Configure ADC
@@ -107,17 +109,18 @@ function out( motor, value )
 
     -- Sets direction pins
     -- Avoid shotcut
-    if ( value < 0 ) ~= ( pio.pin[ dirp ] == 1 ) then -- Changed Direction
+    if ( value < 0 ) ~= ( pio.pin.getval( dirp ) == 1 ) then -- Changed Direction
       pwm.stop( pwmp )
-    end
+      tmr.delay( params.timer, 1000 )
 
-    -- Set pins
-    if value < 0 then
-      pio.pin.sethigh( dirp )
-      pio.pin.setlow( ndirp )
-    else
-      pio.pin.setlow( dirp )
-      pio.pin.sethigh( ndirp )
+      -- Set pins
+      if value < 0 then
+        pio.pin.sethigh( dirp )
+        pio.pin.setlow( ndirp )
+      else
+        pio.pin.setlow( dirp )
+        pio.pin.sethigh( ndirp )
+      end
     end
 
     -- Sets PWM
