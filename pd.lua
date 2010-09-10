@@ -11,31 +11,37 @@ local params = {}
 
 -- Initializes the ADC and set parameters
 function init()
-  -- Global parameters
-  params.smoothing = 4
+  -- Global parameter
+  params.smoothing = 64
   params.blocking = 0
-  params.clock = 0
-  params.buffer = 4
+  params.clock = 256
+  params.buffer = 64
   params.timer = 1
-  params.pwm_clock = 50000
+  params.timerAdc = 2
+  params.pwm_clock = 4000
 
-  -- Motor 0
-  params.max0 = 490 
-  params.min0 = 90
-  params.pos0 = 330
-  params.objective0 = 330
-  params.pwm0 = 5
---  params.dir0 = pio.PF_0
-  params.dir0 = pio.PC_7
-  params.ndir0 = pio.PC_5
+  -- Motor 3
+  params.max3 = 264
+  params.min3 = 37
+--  params.max3 = 261
+--  params.min3 = 9
+  params.pos3 = 30
+  params.objective3 = 38
+  params.pwm3 = 5
+  params.dir3 = pio.PC_7
+  params.ndir3 = pio.PC_5
 
   -- ADC 0
-  ADCConfig( 0 )
+  ADCConfig( 3 )
 
   -- PIOs
-  pio.pin.setdir( pio.OUTPUT, params.dir0, params.ndir0 )
-  pio.pin.setlow( params.dir0 )
-  pio.pin.sethigh( params.ndir0 )
+  pio.pin.setdir( pio.OUTPUT, params.dir3, params.ndir3 )
+  pio.pin.setlow( params.dir3 )
+  pio.pin.sethigh( params.ndir3 )
+
+  -- PWM
+  pwm.setup( params.pwm3, params.pwm_clock, 20 )
+  pwm.stop( params.pwm3 )
 
   -- Run
 --  run()
@@ -45,11 +51,15 @@ end
 function ADCConfig( id )
   adc.setblocking( id, params.blocking )
   adc.setsmoothing( id, params.smoothing )
-  adc.setclock( id, params.clock, params.timer )
+  adc.setclock( id, params.clock, params.timerAdc )
 end
 
 -- Returns a position for a given adc value
 function adcToPos( max, min, val )
+  if val == nil then
+    return nil
+  end
+
   return ( val - min ) * 100 / ( max - min )
 end
 
@@ -69,23 +79,24 @@ function distance( motor )
     params[ "pos" .. motor ] = p
   end
 
---  return params[ "objective" .. motor ] - params[ "pos" .. motor ]
   return params[ "objective" .. motor ] - p
 end
 
 -- Calculates the desired speed for a given distance
 function calcSpeed( dist )
-  if math.abs( dist ) >= trashHold then
+  local absDist = math.abs( dist )
+
+  if absDist >= trashHold then
     if dist < 0 then
       return -100
     else
       return 100
     end
   else
-    if dist > 0 then
-      return math.abs( dist ) * 4
+    if dist < 0 then
+      return - absDist * 4
     else
-      return - math.abs( dist ) * 4
+      return absDist * 4
     end
   end
 end
@@ -95,7 +106,9 @@ function out( motor, value )
   local pwmp, dirp, ndirp -- PWM and Direction pins
   local pwm_val = math.abs( value )
 
-  if pwm_val == 100 then
+  print( value )
+
+  if pwm_val >= 100 then
     pwm_val = 99
   end
 
@@ -129,14 +142,21 @@ function out( motor, value )
   end
 end
 
+function setObjective( motor, val )
+  params[ "objective" .. motor ] = val
+end
+
 function run()
   while true do
     -- Get sample
-    if adc.isdone( 0 ) == 1 then
-      adc.sample( 0, params.buffer )
+    if adc.isdone( 3 ) == 1 then
+      adc.sample( 3, params.buffer )
     end
 
-    out( 0, calcSpeed( distance( 0 ) ) )
+    out( 3, calcSpeed( distance( 3 ) ) )
   end
 end
 
+init()
+run()
+--]]
