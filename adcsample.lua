@@ -1,4 +1,4 @@
-local port = 4
+local port = 3
 
 function sample( smoothing, clock, buffer )
   local tmp, key
