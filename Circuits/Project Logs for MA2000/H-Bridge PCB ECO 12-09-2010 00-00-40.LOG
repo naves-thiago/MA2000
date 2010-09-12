@@ -1,0 +1,5 @@
+Added Component: Designator=Q6(TO-92)
+Added Pin To Net: NetName=DIRECTION Pin=Q6-1
+Added Pin To Net: NetName=NetQ2_1 Pin=Q6-2
+Added Pin To Net: NetName=GND Pin=Q6-3
+Added Member To Class: ClassName=H-Bridge Member=Component Q6 2SK649

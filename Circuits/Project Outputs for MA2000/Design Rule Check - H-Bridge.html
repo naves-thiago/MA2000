@@ -1,0 +1,472 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-16">
+<style type="text/css">
+		h1, h2, h3, h4, h5, h6 {
+			font-family : sans-serif;
+			color : white;
+			background-color : #21489e;
+			padding: 0.3em;
+		}
+		body {
+			font-family : verdana;
+		}
+		td, th {
+			padding: 0.5em;
+			text-align : center;
+			width : 18%;
+		}
+		th {
+			background-color : #A6CAF0;
+
+		}
+		th.column1, td.column1 {
+			text-align: left;
+			width : auto;
+		}
+		table {
+			width : 100%;
+		}
+		
+		.DRC_summary_header {							
+			padding-bottom : 0.1em;
+			border : 0px solid black;							
+			width: 100%;
+                        align: right;
+                        
+		}
+
+		.DRC_summary_header_col1, 
+		.DRC_summary_header_col2, 
+		.DRC_summary_header_col3
+		{
+			color : black;
+			font-size:150%;
+                        padding : 0em;
+			padding-top : 0.2em;
+			padding-bottom 0.2: 0em;
+			border : 0px solid black;
+			width : auto;
+			vertical-align: top;
+			font-weight: bold;				
+		}
+		
+		.DRC_summary_header_col1 	
+		{		                       
+			text-align: right;
+                        width: auto;	
+		}
+
+		.DRC_summary_header_col2 	
+		{		
+			text-align: center;	
+		}
+
+		.DRC_summary_header_col3 	
+		{		
+			text-align: left;	
+		}
+
+
+		
+		.header_holder
+		{
+		Width = 100%;
+		border = 0px solid green;
+		padding = 0;
+		}
+		
+		
+		
+		.front_matter, .front_matter_column1, .front_matter_column2, .front_matter_column3
+                {
+			left:0;
+			top:0;
+			padding-top : 0.1em;			
+			border : 0px solid black;
+			width : 100%;
+			vertical-align: top
+
+		}
+		.front_matter {	
+			
+			margin-top: 5px;
+ 			margin-left: 0px;					 			
+ 			horizontal-align: left;
+		}
+				
+		
+		.front_matter_column1 {
+			width : 10em;	
+			text-align  : right;
+			padding-right:0.1em;
+			
+		}
+		
+		.front_matter_column2 {
+                        width: 0.1em;
+			align: center;
+			text-align : center;
+			margin-right  : 0.1em;	
+			margin-left   : 0.1em;
+		}
+		.front_matter_column3 {
+			width         : auto;  
+			text-align    : left;	
+			margin-right  : 0.5em;				
+		}
+		
+		.total_column1, .total_column {
+			font-weight : bold;
+		}
+		.total_column1 {
+			text-align : right;
+		}
+		.warning, .error {
+			color : red;
+			font-weight : bold;
+		}
+		tr.onmouseout_odd {
+			background-color : #EEEEE0 
+		}
+		tr.onmouseout_even { 
+			background-color : #F3F3E3   
+		}
+		tr.onmouseover_odd, tr.onmouseover_even { 
+			background-color : lightYellow
+		} 
+		a:link, a:visited, .q a:link,.q a:active,.q {
+			color: #21489e; 
+		}
+		a:link.callback, a:visited.callback { 
+			color: #008000 
+		}
+		a:link.customize, a:visited.customize {
+			color: #C0C0C0;
+			position: absolute; 
+			right: 10px;
+		}	
+		p.contents_level1 {
+			font-weight : bold;
+			font-size : 110%;
+			margin : 0.5em;
+		}
+		p.contents_level2 {
+			position : relative;
+			left : 20px;
+			margin : 0.5em;
+		}
+	</style><script type="text/javascript">
+		function coordToMils(coord) {
+			var number = coord / 10000;
+			
+			if (number != number.toFixed(3))
+				number = number.toFixed(3);
+
+			return number + 'mil'
+		}
+
+		function coordToMM(coord) {
+			var number = 0.0254 * coord / 10000;
+			
+			if (number != number.toFixed(4))
+				number = number.toFixed(4);
+			
+			return number + 'mm'
+		}
+	
+		function convertCoord(coordNode, units) {
+			for (var i = 0; i < coordNode.childNodes.length; i++) {
+				coordNode.removeChild(coordNode.childNodes[i]);
+			}
+
+			var coord = coordNode.getAttribute('value');
+			if (coord != null) {
+				if (units == 'mm') {
+					textNode = document.createTextNode(coordToMM(coord));
+					coordNode.appendChild(textNode);
+				} else if (units == 'mil') {
+					textNode = document.createTextNode(coordToMils(coord));		
+					coordNode.appendChild(textNode);	
+				}
+			}
+		}
+	
+		function convertUnits(unitNode, units) {
+			for (var i = 0; i < unitNode.childNodes.length; i++) {
+				unitNode.removeChild(unitNode.childNodes[i]);		
+			}
+		
+			textNode = document.createTextNode(units); 
+			unitNode.appendChild(textNode);
+		}
+	
+		function changeUnits(radio_input, units) {
+			if (radio_input.checked) {
+			
+				var elements = document.getElementsByName('coordinate');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertCoord(elements[i], units);
+					}
+				}
+	
+				var elements = document.getElementsByName('units');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertUnits(elements[i], units);
+					}
+				}
+			}
+		}
+	</script></head>
+<body onload=""><img ALT="Altium" src="
+			file://C:\PROGRAM FILES\ALTIUM DESIGNER SUMMER 09\Templates\AD-rgb_logo_223x64.gif
+		"><a href="dxpprocess://Client:SetupPreferences?Server=PCB|PageName=Reports" class="customize"><acronym title="dxpprocess://Client:SetupPreferences?Server=PCB|PageName=Reports">customize</acronym></a><h1>Design Rule Verification Report</h1>
+<table class="header_holder">
+<td Style="width:70%">
+<table class="front_matter">
+<tr class="front_matter">
+<td class="front_matter_column1">Date</td>
+<td class="front_matter_column2">:</td>
+<td class="front_matter_column3">11/09/2010</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Time</td>
+<td class="front_matter_column2">:</td>
+<td class="front_matter_column3">23:35:23</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Elapsed Time</td>
+<td class="front_matter_column2">:</td>
+<td class="front_matter_column3">00:00:00</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Filename</td>
+<td class="front_matter_column2">:</td>
+<td class="front_matter_column3"><a href="file:///C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc" class="file"><acronym title="C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc">C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc</acronym></a></td>
+</tr>
+</table>
+</td>
+<td Style="Width:30%">
+<table class="DRC_summary_header">
+<tr>
+<td class="DRC_summary_header_col1">Warnings</td>
+<td class="DRC_summary_header_col2">:</td>
+<td class="DRC_summary_header_col3">0</td></tr>
+<tr>
+<td class="DRC_summary_header_col1">Rule Violations</td>
+<td class="DRC_summary_header_col2">:</td>
+<td class="DRC_summary_header_col3" style="color : red">39</td></tr>
+</table>
+</td>
+</table>
+<hr><a name="IDASBGAC"><h2>Summary</h2></a><table>
+<tr>
+<th class="column1">Warnings</th>
+<th class="column2">Count</th>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">0</td>
+</tr>
+</table><br><table>
+<tr>
+<th class="column1">Rule Violations</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDAICGAC">Net Antennae (Tolerance=0mil) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDASCGAC">Silk to Silk (Clearance=10mil) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDA2CGAC">Silkscreen Over Component Pads (Clearance=10mil) (All),(All)</a></td>
+<td class="column2">8</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDAURGAC">Minimum Solder Mask Sliver (Gap=10mil) (All),(All)</a></td>
+<td class="column2">4</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDASVGAC">Hole To Hole Clearance (Gap=10mil) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDA2VGAC">Hole Size Constraint (Min=1mil) (Max=100mil) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDAGWGAC">Height Constraint (Min=0mil) (Max=1000mil) (Prefered=500mil) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDAQWGAC">Width Constraint (Min=10mil) (Max=10mil) (Preferred=10mil) (Disabled)(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDA0WGAC">Power Plane Connect Rule(Relief Connect )(Expansion=20mil) (Conductor Width=10mil) (Air Gap=10mil) (Entries=4) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDAEXGAC">Clearance Constraint (Gap=10mil) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDAOXGAC">Un-Routed Net Constraint ( (All) )</a></td>
+<td class="column2">27</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDAYDHAC">Short-Circuit Constraint (Allowed=No) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">39</td>
+</tr>
+</table><br><hr><a name="IDA2CGAC"><table>
+<tr>
+<th style="text-align : left" colspan="2" class="rule">Silkscreen Over Component Pads (Clearance=10mil) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3706.063mil|Location2.X=3753.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3706.063mil|Location2.X=3753.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True">Track (3710mil,3390mil)(3750mil,3390mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3638.441mil|Location2.X=3701.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3638.441mil|Location2.X=3701.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True">Pad R3-1(3670mil,3390mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3986.063mil|Location2.X=4033.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3986.063mil|Location2.X=4033.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True">Track (3990mil,3390mil)(4030mil,3390mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4038.441mil|Location2.X=4101.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4038.441mil|Location2.X=4101.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True">Pad R3-2(4070mil,3390mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3356.063mil|Location2.X=3403.937mil|Location1.Y=2746.063mil|Location2.Y=2753.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3356.063mil|Location2.X=3403.937mil|Location1.Y=2746.063mil|Location2.Y=2753.937mil|Absolute=True">Track (3360mil,2750mil)(3400mil,2750mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3288.441mil|Location2.X=3351.559mil|Location1.Y=2718.441mil|Location2.Y=2781.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3288.441mil|Location2.X=3351.559mil|Location1.Y=2718.441mil|Location2.Y=2781.559mil|Absolute=True">Pad R2-1(3320mil,2750mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3636.063mil|Location2.X=3683.937mil|Location1.Y=2746.063mil|Location2.Y=2753.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3636.063mil|Location2.X=3683.937mil|Location1.Y=2746.063mil|Location2.Y=2753.937mil|Absolute=True">Track (3640mil,2750mil)(3680mil,2750mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3688.441mil|Location2.X=3751.559mil|Location1.Y=2718.441mil|Location2.Y=2781.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3688.441mil|Location2.X=3751.559mil|Location1.Y=2718.441mil|Location2.Y=2781.559mil|Absolute=True">Pad R2-2(3720mil,2750mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3356.063mil|Location2.X=3403.937mil|Location1.Y=2876.063mil|Location2.Y=2883.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3356.063mil|Location2.X=3403.937mil|Location1.Y=2876.063mil|Location2.Y=2883.937mil|Absolute=True">Track (3360mil,2880mil)(3400mil,2880mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3288.441mil|Location2.X=3351.559mil|Location1.Y=2848.441mil|Location2.Y=2911.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3288.441mil|Location2.X=3351.559mil|Location1.Y=2848.441mil|Location2.Y=2911.559mil|Absolute=True">Pad R1-1(3320mil,2880mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3636.063mil|Location2.X=3683.937mil|Location1.Y=2876.063mil|Location2.Y=2883.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3636.063mil|Location2.X=3683.937mil|Location1.Y=2876.063mil|Location2.Y=2883.937mil|Absolute=True">Track (3640mil,2880mil)(3680mil,2880mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3688.441mil|Location2.X=3751.559mil|Location1.Y=2848.441mil|Location2.Y=2911.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3688.441mil|Location2.X=3751.559mil|Location1.Y=2848.441mil|Location2.Y=2911.559mil|Absolute=True">Pad R1-2(3720mil,2880mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3476.063mil|Location2.X=3523.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3476.063mil|Location2.X=3523.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True">Track (3480mil,3390mil)(3520mil,3390mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3528.441mil|Location2.X=3591.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3528.441mil|Location2.X=3591.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True">Pad R4-1(3560mil,3390mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3196.063mil|Location2.X=3243.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3196.063mil|Location2.X=3243.937mil|Location1.Y=3386.063mil|Location2.Y=3393.937mil|Absolute=True">Track (3200mil,3390mil)(3240mil,3390mil)  Top Overlay</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3128.441mil|Location2.X=3191.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3128.441mil|Location2.X=3191.559mil|Location1.Y=3358.441mil|Location2.Y=3421.559mil|Absolute=True">Pad R4-2(3160mil,3390mil)  Multi-Layer</acronym></a></td>
+</tr>
+</table></a><a href="#top">Back to top</a><br><br><a name="IDAURGAC"><table>
+<tr>
+<th style="text-align : left" colspan="2" class="rule">Minimum Solder Mask Sliver (Gap=10mil) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True">Pad Q6-2(3930mil,2480mil)  Multi-Layer</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2506.315mil|Location2.Y=2553.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2506.315mil|Location2.Y=2553.685mil|Absolute=True">Pad Q6-3(3930mil,2530mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2406.315mil|Location2.Y=2453.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2406.315mil|Location2.Y=2453.685mil|Absolute=True">Pad Q6-1(3930mil,2430mil)  Multi-Layer</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3886.63mil|Location2.X=3973.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True">Pad Q6-2(3930mil,2480mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True">Pad Q5-2(3570mil,2480mil)  Multi-Layer</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2406.315mil|Location2.Y=2453.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2406.315mil|Location2.Y=2453.685mil|Absolute=True">Pad Q5-3(3570mil,2430mil)  Multi-Layer</acronym></a></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td style="width:50%; text-align:left" class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2506.315mil|Location2.Y=2553.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2506.315mil|Location2.Y=2553.685mil|Absolute=True">Pad Q5-1(3570mil,2530mil)  Multi-Layer</acronym></a></td>
+<td style="width:50%; text-align:left" class="column2"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3526.63mil|Location2.X=3613.37mil|Location1.Y=2456.315mil|Location2.Y=2503.685mil|Absolute=True">Pad Q5-2(3570mil,2480mil)  Multi-Layer</acronym></a></td>
+</tr>
+</table></a><a href="#top">Back to top</a><br><br><a name="IDAOXGAC"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Un-Routed Net Constraint ( (All) )</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3200mil|Location2.X=3260mil|Location1.Y=2280mil|Location2.Y=3290mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3200mil|Location2.X=3260mil|Location1.Y=2280mil|Location2.Y=3290mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad 5V In-2 (3200,2280mil) And Track on layer Bottom Layer (3260,3290mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3460mil|Location2.X=3660mil|Location1.Y=3290mil|Location2.Y=3290mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3460mil|Location2.X=3660mil|Location1.Y=3290mil|Location2.Y=3290mil|Absolute=True">Un-Routed Net Constraint: Net PWM Between Pad U2-12 (3460,3290mil) And Pad U2-10 (3660,3290mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3060mil|Location2.X=3460mil|Location1.Y=3220mil|Location2.Y=3290mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3060mil|Location2.X=3460mil|Location1.Y=3220mil|Location2.Y=3290mil|Absolute=True">Un-Routed Net Constraint: Net PWM Between Pad Control-1 (3060,3220mil) And Pad U2-12 (3460,3290mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3560mil|Location2.X=4540mil|Location1.Y=3290mil|Location2.Y=3180mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3560mil|Location2.X=4540mil|Location1.Y=3290mil|Location2.Y=3180mil|Absolute=True">Un-Routed Net Constraint: Net NetQ4_1 Between Pad U2-11 (3560,3290mil) And Pad Q4-1 (4540,3180mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3720mil|Location2.X=3930mil|Location1.Y=2750mil|Location2.Y=2530mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3720mil|Location2.X=3930mil|Location1.Y=2750mil|Location2.Y=2530mil|Absolute=True">Un-Routed Net Constraint: Net NetQ2_1 Between Pad R2-2 (3720,2750mil) And Pad Q6-3 (3930,2530mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3930mil|Location2.X=4580mil|Location1.Y=2530mil|Location2.Y=2460mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3930mil|Location2.X=4580mil|Location1.Y=2530mil|Location2.Y=2460mil|Absolute=True">Un-Routed Net Constraint: Net NetQ2_1 Between Pad Q6-3 (3930,2530mil) And Pad Q2-1 (4580,2460mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3720mil|Location1.Y=2480mil|Location2.Y=2880mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3720mil|Location1.Y=2480mil|Location2.Y=2880mil|Absolute=True">Un-Routed Net Constraint: Net NetQ1_1 Between Pad Q5-2 (3570,2480mil) And Pad R1-2 (3720,2880mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=4240mil|Location1.Y=2480mil|Location2.Y=2460mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=4240mil|Location1.Y=2480mil|Location2.Y=2460mil|Absolute=True">Un-Routed Net Constraint: Net NetQ1_1 Between Pad Q5-2 (3570,2480mil) And Pad Q1-1 (4240,2460mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4540mil|Location2.X=4770mil|Location1.Y=3080mil|Location2.Y=2890mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4540mil|Location2.X=4770mil|Location1.Y=3080mil|Location2.Y=2890mil|Absolute=True">Un-Routed Net Constraint: Net NetMotor_2 Between Pad Q4-2 (4540,3080mil) And Pad Motor-2 (4770,2890mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4580mil|Location2.X=4770mil|Location1.Y=2660mil|Location2.Y=2890mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4580mil|Location2.X=4770mil|Location1.Y=2660mil|Location2.Y=2890mil|Absolute=True">Un-Routed Net Constraint: Net NetMotor_2 Between Pad Q2-3 (4580,2660mil) And Pad Motor-2 (4770,2890mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4220mil|Location2.X=4240mil|Location1.Y=3080mil|Location2.Y=2660mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4220mil|Location2.X=4240mil|Location1.Y=3080mil|Location2.Y=2660mil|Absolute=True">Un-Routed Net Constraint: Net NetMotor_1 Between Pad Q3-2 (4220,3080mil) And Pad Q1-3 (4240,2660mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4240mil|Location2.X=4770mil|Location1.Y=2660mil|Location2.Y=2790mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4240mil|Location2.X=4770mil|Location1.Y=2660mil|Location2.Y=2790mil|Absolute=True">Un-Routed Net Constraint: Net NetMotor_1 Between Pad Q1-3 (4240,2660mil) And Pad Motor-1 (4770,2790mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3570mil|Location1.Y=2280mil|Location2.Y=2430mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3570mil|Location1.Y=2280mil|Location2.Y=2430mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad 12V In-1 (3570,2280mil) And Pad Q5-3 (3570,2430mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3200mil|Location2.X=3300mil|Location1.Y=2420mil|Location2.Y=2280mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3200mil|Location2.X=3300mil|Location1.Y=2420mil|Location2.Y=2280mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad 17V In-1 (3200,2420mil) And Pad 5V In-1 (3300,2280mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4220mil|Location2.X=4540mil|Location1.Y=2980mil|Location2.Y=2980mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4220mil|Location2.X=4540mil|Location1.Y=2980mil|Location2.Y=2980mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad Q3-3 (4220,2980mil) And Pad Q4-3 (4540,2980mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3860mil|Location2.X=4220mil|Location1.Y=2990mil|Location2.Y=2980mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3860mil|Location2.X=4220mil|Location1.Y=2990mil|Location2.Y=2980mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U2-7 (3860,2990mil) And Pad Q3-3 (4220,2980mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3930mil|Location1.Y=2430mil|Location2.Y=2480mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3930mil|Location1.Y=2430mil|Location2.Y=2480mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad Q5-3 (3570,2430mil) And Pad Q6-2 (3930,2480mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3300mil|Location2.X=3570mil|Location1.Y=2280mil|Location2.Y=2280mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3300mil|Location2.X=3570mil|Location1.Y=2280mil|Location2.Y=2280mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad 5V In-1 (3300,2280mil) And Pad 12V In-1 (3570,2280mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3860mil|Location2.X=3930mil|Location1.Y=2990mil|Location2.Y=2480mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3860mil|Location2.X=3930mil|Location1.Y=2990mil|Location2.Y=2480mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U2-7 (3860,2990mil) And Pad Q6-2 (3930,2480mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3060mil|Location2.X=3360mil|Location1.Y=3120mil|Location2.Y=3290mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3060mil|Location2.X=3360mil|Location1.Y=3120mil|Location2.Y=3290mil|Absolute=True">Un-Routed Net Constraint: Net DIRECTION Between Pad Control-2 (3060,3120mil) And Pad U2-13 (3360,3290mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3360mil|Location2.X=3930mil|Location1.Y=3290mil|Location2.Y=2430mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3360mil|Location2.X=3930mil|Location1.Y=3290mil|Location2.Y=2430mil|Absolute=True">Un-Routed Net Constraint: Net DIRECTION Between Pad U2-13 (3360,3290mil) And Pad Q6-1 (3930,2430mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3320mil|Location2.X=3320mil|Location1.Y=2750mil|Location2.Y=2880mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3320mil|Location2.X=3320mil|Location1.Y=2750mil|Location2.Y=2880mil|Absolute=True">Un-Routed Net Constraint: Net 17V Between Pad R2-1 (3320,2750mil) And Pad R1-1 (3320,2880mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3200mil|Location2.X=3320mil|Location1.Y=2520mil|Location2.Y=2750mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3200mil|Location2.X=3320mil|Location1.Y=2520mil|Location2.Y=2750mil|Absolute=True">Un-Routed Net Constraint: Net 17V Between Pad 17V In-2 (3200,2520mil) And Pad R2-1 (3320,2750mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4240mil|Location2.X=4580mil|Location1.Y=2560mil|Location2.Y=2560mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4240mil|Location2.X=4580mil|Location1.Y=2560mil|Location2.Y=2560mil|Absolute=True">Un-Routed Net Constraint: Net 12V Between Pad Q1-2 (4240,2560mil) And Pad Q2-2 (4580,2560mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3670mil|Location2.X=4240mil|Location1.Y=2280mil|Location2.Y=2560mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3670mil|Location2.X=4240mil|Location1.Y=2280mil|Location2.Y=2560mil|Absolute=True">Un-Routed Net Constraint: Net 12V Between Pad 12V In-2 (3670,2280mil) And Pad Q1-2 (4240,2560mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3760mil|Location1.Y=2530mil|Location2.Y=3290mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3570mil|Location2.X=3760mil|Location1.Y=2530mil|Location2.Y=3290mil|Absolute=True">Un-Routed Net Constraint: Net !DIRECTION Between Pad Q5-1 (3570,2530mil) And Pad U2-9 (3760,3290mil)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3060mil|Location2.X=3760mil|Location1.Y=3020mil|Location2.Y=3290mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Thiago\programas\elua\ma2000\Circuits\H-Bridge.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3060mil|Location2.X=3760mil|Location1.Y=3020mil|Location2.Y=3290mil|Absolute=True">Un-Routed Net Constraint: Net !DIRECTION Between Pad Control-3 (3060,3020mil) And Pad U2-9 (3760,3290mil)</acronym></a><br></td>
+</tr>
+</table></a><a href="#top">Back to top</a><br><br></body>
+</html>
