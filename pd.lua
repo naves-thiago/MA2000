@@ -10,6 +10,8 @@ local trashHold = 35
 local params = {}
 local btn = 0
 local kit = require( pd.board() )
+local force = 0
+local lastDist = 0
 
 -- Initializes the ADC and set parameters
 function init()
@@ -25,8 +27,10 @@ function init()
   -- Motor 3
 --  params.min3 = 108
 --  params.max3 = 392
-  params.max3 = 264
-  params.min3 = 37
+--  params.max3 = 264
+--  params.min3 = 37
+  params.max3 = 348
+  params.min3 = 163
   params.pos3 = 78
   params.objective3 = 78
   params.pwm3 = 5
@@ -97,11 +101,16 @@ function calcSpeed( dist )
       return 100
     end
   else
+    return math.min( absDist * 1.5 + force, 100 ) * ( dist / absDist )
+--[[    
     if dist < 0 then
-      return - absDist * 2
+      return - absDist
+--      return - 100 * math.sqrt( absDist ) / math.sqrt( trashHold )
     else
-      return absDist * 2
+      return absDist
+--      return 100 * math.sqrt( absDist ) / math.sqrt( trashHold )
     end
+--]]
   end
 end
 
@@ -110,7 +119,7 @@ function out( motor, value )
   local pwmp, dirp, ndirp -- PWM and Direction pins
   local pwm_val = math.abs( value )
 
-  --print( value )
+--  print( value )
 
   if pwm_val >= 100 then
     pwm_val = 99
@@ -126,12 +135,12 @@ function out( motor, value )
 
     -- Sets direction pins
     -- Avoid shotcut
-    if ( value < 0 ) ~= ( pio.pin.getval( dirp ) == 1 ) then -- Changed Direction
+    if ( value > 0 ) ~= ( pio.pin.getval( dirp ) == 1 ) then -- Changed Direction
       pwm.stop( pwmp )
       tmr.delay( params.timer, 1000 )
 
       -- Set pins
-      if value < 0 then
+      if value > 0 then
         pio.pin.sethigh( dirp )
         pio.pin.setlow( ndirp )
       else
@@ -158,8 +167,18 @@ function run()
       adc.sample( 3, params.buffer )
     end
 
+    if ( lastDist - distance( 3 ) ) < math.abs( distance( 3 ) * 2 / 1.5 ) then
+--      force = force + 100 - math.max( ( lastDist - distance( 3 ) ) / 2, 0 )
+      force = math.min( force + 1, 100 )
+    end
+
+    if distance( 3 ) < 1 then
+      force = 0
+    end
+
     out( 3, calcSpeed( distance( 3 ) ) )
-    
+    lastDist = distance( 3 )
+
     -- Read buttons
     if kit.btn_pressed( kit.BTN_LEFT ) then
       if btn ~= 1 then
