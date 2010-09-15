@@ -6,14 +6,16 @@
 --         By Thiago Naves, Led Lab, PUC-Rio            --
 ----------------------------------------------------------
 
-local trashHold = 25
+local trashHold = 35
 local params = {}
+local btn = 0
+local kit = require( pd.board() )
 
 -- Initializes the ADC and set parameters
 function init()
   -- Global parameter
-  params.smoothing = 64
   params.blocking = 0
+  params.smoothing = 64
   params.clock = 256
   params.buffer = 64
   params.timer = 1
@@ -21,12 +23,12 @@ function init()
   params.pwm_clock = 4000
 
   -- Motor 3
+--  params.min3 = 108
+--  params.max3 = 392
   params.max3 = 264
   params.min3 = 37
---  params.max3 = 261
---  params.min3 = 9
-  params.pos3 = 30
-  params.objective3 = 38
+  params.pos3 = 78
+  params.objective3 = 78
   params.pwm3 = 5
   params.dir3 = pio.PC_7
   params.ndir3 = pio.PC_5
@@ -60,12 +62,12 @@ function adcToPos( max, min, val )
     return nil
   end
 
-  return ( val - min ) * 100 / ( max - min )
+  return ( val - min ) * 200 / ( max - min )
 end
 
 -- Returns expected adc value for a given position
 function posToAdc( max, min, val )
-  return val * ( max - min ) / 100 + min
+  return val * ( max - min ) / 200 + min
 end
 
 -- Returns the distance between the current position and destination
@@ -78,6 +80,8 @@ function distance( motor )
   else
     params[ "pos" .. motor ] = p
   end
+  
+--  print( p )
 
   return params[ "objective" .. motor ] - p
 end
@@ -94,9 +98,9 @@ function calcSpeed( dist )
     end
   else
     if dist < 0 then
-      return - absDist * 4
+      return - absDist * 2
     else
-      return absDist * 4
+      return absDist * 2
     end
   end
 end
@@ -106,7 +110,7 @@ function out( motor, value )
   local pwmp, dirp, ndirp -- PWM and Direction pins
   local pwm_val = math.abs( value )
 
-  print( value )
+  --print( value )
 
   if pwm_val >= 100 then
     pwm_val = 99
@@ -147,6 +151,7 @@ function setObjective( motor, val )
 end
 
 function run()
+--  print( "Objective: %04d" , params.objective )
   while true do
     -- Get sample
     if adc.isdone( 3 ) == 1 then
@@ -154,6 +159,23 @@ function run()
     end
 
     out( 3, calcSpeed( distance( 3 ) ) )
+    
+    -- Read buttons
+    if kit.btn_pressed( kit.BTN_LEFT ) then
+      if btn ~= 1 then
+        btn = 1
+        params.objective3 = math.min( 200, params.objective3 + 10 )
+      end
+    else
+      if kit.btn_pressed( kit.BTN_RIGHT ) then
+        if btn ~= 2 then
+          btn = 2
+          params.objective3 = math.max( 0, params.objective3 - 10 )
+        end
+      else
+        btn = 0
+      end
+    end  
   end
 end
 
