@@ -6,12 +6,11 @@
 --         By Thiago Naves, Led Lab, PUC-Rio            --
 ----------------------------------------------------------
 
-local trashHold = 35
+--local trashHold = 35
+local trashHold = 70
 local params = {}
 local btn = 0
 local kit = require( pd.board() )
-local force = 0
-local lastDist = 0
 
 -- Initializes the ADC and set parameters
 function init()
@@ -23,6 +22,8 @@ function init()
   params.timer = 1
   params.timerAdc = 2
   params.pwm_clock = 4000
+  params.integralInc = 0.03
+  params.integralMax = 50
 
   -- Motor 3
 --  params.min3 = 108
@@ -36,6 +37,14 @@ function init()
   params.pwm3 = 5
   params.dir3 = pio.PC_7
   params.ndir3 = pio.PC_5
+
+  -- PID 3
+  params.lastError3 = 0
+  params.integral3 = 0
+  params.derivative3 = 0
+  params.ke3 = 20
+  params.ki3 = 6
+  params.kd3 = 20
 
   -- ADC 0
   ADCConfig( 3 )
@@ -91,26 +100,25 @@ function distance( motor )
 end
 
 -- Calculates the desired speed for a given distance
-function calcSpeed( dist )
-  local absDist = math.abs( dist )
+function calcSpeed( motor )
+  local absDist = math.abs( params[ "lastError"..motor ] )
+  local tmp
 
   if absDist >= trashHold then
-    if dist < 0 then
+    if params[ "lastError"..motor ] < 0 then
+      print( -100 )
       return -100
     else
+      print( 100 )
       return 100
     end
   else
-    return math.min( absDist * 1.5 + force, 100 ) * ( dist / absDist )
---[[    
-    if dist < 0 then
-      return - absDist
---      return - 100 * math.sqrt( absDist ) / math.sqrt( trashHold )
-    else
-      return absDist
---      return 100 * math.sqrt( absDist ) / math.sqrt( trashHold )
-    end
---]]
+    tmp = math.abs( params[ "ke"..motor ] * absDist )
+    tmp = tmp + math.abs( params[ "ki"..motor ] * params[ "integral"..motor ] ) 
+    tmp = tmp + math.abs( params[ "kd"..motor ] * params[ "derivative"..motor ] )
+    tmp = tmp * ( params[ "lastError"..motor ] / absDist ) * 0.1
+    print( params[ "lastError"..motor ], params[ "integral"..motor ], params[ "derivative"..motor], tmp )
+    return tmp
   end
 end
 
@@ -155,38 +163,41 @@ function out( motor, value )
   end
 end
 
-function setObjective( motor, val )
-  params[ "objective" .. motor ] = val
-end
-
 function run()
 --  print( "Objective: %04d" , params.objective )
+  
+  local dist
   while true do
     -- Get sample
     if adc.isdone( 3 ) == 1 then
       adc.sample( 3, params.buffer )
     end
 
-    if ( lastDist - distance( 3 ) ) < math.abs( distance( 3 ) * 2 / 1.5 ) then
---      force = force + 100 - math.max( ( lastDist - distance( 3 ) ) / 2, 0 )
-      force = math.min( force + 1, 100 )
-    end
+    dist = distance( 3 )
+    params.derivative3 = math.min( math.max( dist - params.lastError3, 0 ), 100 )
 
-    if distance( 3 ) < 1 then
-      force = 0
-    end
+--    params.integral3 = math.min( params.integral3 + math.abs( dist ) * params.integralInc, params.integralMax ) 
+    params.integral3 = math.max( 0, math.min( params.integral3 + dist * params.integralInc, params.integralMax ) )
+    params.lastError3 = dist
 
-    out( 3, calcSpeed( distance( 3 ) ) )
-    lastDist = distance( 3 )
+    --[[
+    if math.abs( dist ) < 2 then
+      params.lastError3 = 0
+      params.integral3 = 0
+      params.derivative3 = 0
+    end
+    --]]
+    
+    out( 3, calcSpeed( 3 ) )
 
     -- Read buttons
-    if kit.btn_pressed( kit.BTN_LEFT ) then
+    if kit.btn_pressed( kit.BTN_RIGHT ) then
       if btn ~= 1 then
         btn = 1
         params.objective3 = math.min( 200, params.objective3 + 10 )
       end
     else
-      if kit.btn_pressed( kit.BTN_RIGHT ) then
+      if kit.btn_pressed( kit.BTN_LEFT ) then
         if btn ~= 2 then
           btn = 2
           params.objective3 = math.max( 0, params.objective3 - 10 )
