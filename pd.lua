@@ -22,14 +22,10 @@ function init()
   params.timer = 1
   params.timerAdc = 2
   params.pwm_clock = 4000
-  params.integralInc = 0.03
-  params.integralMax = 50
+  params.integralInc = 0.3
+  params.integralMax = 80
 
   -- Motor 3
---  params.min3 = 108
---  params.max3 = 392
---  params.max3 = 264
---  params.min3 = 37
   params.max3 = 348
   params.min3 = 163
   params.pos3 = 78
@@ -42,9 +38,11 @@ function init()
   params.lastError3 = 0
   params.integral3 = 0
   params.derivative3 = 0
-  params.ke3 = 20
-  params.ki3 = 6
-  params.kd3 = 20
+  params.ke3 = 40
+  params.ki3 = 15
+  params.kd3 = 100
+--  params.ki3 = 0
+--  params.kd3 = 0
 
   -- ADC 0
   ADCConfig( 3 )
@@ -113,11 +111,12 @@ function calcSpeed( motor )
       return 100
     end
   else
-    tmp = math.abs( params[ "ke"..motor ] * absDist )
-    tmp = tmp + math.abs( params[ "ki"..motor ] * params[ "integral"..motor ] ) 
-    tmp = tmp + math.abs( params[ "kd"..motor ] * params[ "derivative"..motor ] )
-    tmp = tmp * ( params[ "lastError"..motor ] / absDist ) * 0.1
-    print( params[ "lastError"..motor ], params[ "integral"..motor ], params[ "derivative"..motor], tmp )
+    tmp = params[ "ke"..motor ] * absDist
+    tmp = math.abs( tmp + params[ "ki"..motor ] * params[ "integral"..motor ] )
+    tmp = math.abs( tmp + params[ "kd"..motor ] * params[ "derivative"..motor ] )
+    tmp = tmp * ( params[ "lastError"..motor ] / absDist ) * 0.08
+--    tmp = - tmp * 0.06
+    print( string.format( "%02d   %02d   %02d   %02d",  params[ "lastError"..motor ], params[ "integral"..motor ], params[ "derivative"..motor], tmp ) )
     return tmp
   end
 end
@@ -174,20 +173,21 @@ function run()
     end
 
     dist = distance( 3 )
-    params.derivative3 = math.min( math.max( dist - params.lastError3, 0 ), 100 )
+    params.derivative3 = dist - params.lastError3
 
 --    params.integral3 = math.min( params.integral3 + math.abs( dist ) * params.integralInc, params.integralMax ) 
-    params.integral3 = math.max( 0, math.min( params.integral3 + dist * params.integralInc, params.integralMax ) )
+    params.integral3 = params.integral3 + dist * params.integralInc
+
+    if params.integral3 < -params.integralMax then
+      params.integral3 = -params.integralMax  
+    else 
+      if params.integral3 > params.integralMax then
+        params.integral3 = params.integralMax
+      end
+    end
+
     params.lastError3 = dist
 
-    --[[
-    if math.abs( dist ) < 2 then
-      params.lastError3 = 0
-      params.integral3 = 0
-      params.derivative3 = 0
-    end
-    --]]
-    
     out( 3, calcSpeed( 3 ) )
 
     -- Read buttons
