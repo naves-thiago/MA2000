@@ -1,0 +1,4 @@
+rm log.txt
+mv /Volumes/ELUA/log.txt ./
+./convert log.txt
+gnuplot script.txt

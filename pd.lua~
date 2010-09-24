@@ -43,7 +43,7 @@ function init()
 --  params.ke3 = 30
 --  params.ki3 = 3
   params.kd3 = 50 --- MAX: 60 
-  params.ke3 = 4
+  params.ke3 = 2
   params.ki3 = 0
 --  params.kd3 = 0
 
