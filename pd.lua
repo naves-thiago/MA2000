@@ -41,10 +41,9 @@ function init()
 --  params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
-  params.kd3 = 55 --- MAX: 60 -- era 50 
-  params.ke3 = 3  --- era 4
-  params.ki3 = 0.40
---  params.kd3 = 0
+  params.kd3 = 55 --- MAX: 60
+  params.ke3 = 3
+  params.ki3 = 0.35
 
   -- ADC 0
   ADCConfig( 3 )
@@ -194,6 +193,9 @@ function run()
     if key == term.KC_ENTER then
       params.objective3 = params.pos3
       params.integral3 = 0
+      params.lastError3 = 0
+      params.derivative3 = 0
+      params.objective3 = params.objective3 + 20
     end
 
     -- Get sample
