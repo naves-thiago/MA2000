@@ -24,8 +24,8 @@ function init()
   params.timer = 1
   params.timerAdc = 2
   params.pwm_clock = 4000
-  params.integralInc = 0.2
-  params.integralMax = 50
+  params.integralInc = 0.10
+  params.integralMax = 40
 
   -- Motor 3
   params.max3 = 348
@@ -38,13 +38,12 @@ function init()
 
   -- PID 3
   params.lastError3 = 0
+--  params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
---  params.ke3 = 30
---  params.ki3 = 3
-  params.kd3 = 50 --- MAX: 60 
-  params.ke3 = 4
-  params.ki3 = 0
+  params.kd3 = 55 --- MAX: 60 -- era 50 
+  params.ke3 = 3  --- era 4
+  params.ki3 = 0.40
 --  params.kd3 = 0
 
   -- ADC 0
@@ -134,7 +133,8 @@ function calcSpeed( motor )
 
 
 --    tmp = - tmp * 0.06
---    print( string.format( "%02d   %02d   %02d   %02d", params.ke3 * params[ "lastError"..motor ], params.ki3 * params[ "integral"..motor ], params.kd3 * params[ "derivative"..motor], tmp ) )
+    print( string.format( "%02d   %02d   %02d   %02d", params.ke3 * params[ "lastError"..motor ], params.ki3 * params[ "integral"..motor ], params.kd3 * params[ "derivative"..motor], tmp ) )  
+--    params[ "lastSpeed"..motor ] = tmp;
     return tmp
 --  end
 end
@@ -193,6 +193,7 @@ function run()
     end
     if key == term.KC_ENTER then
       params.objective3 = params.pos3
+      params.integral3 = 0
     end
 
     -- Get sample
@@ -201,7 +202,7 @@ function run()
     end
 
     dist = distance( 3 )
-    print( dist )
+--    print( dist )
     params.derivative3 = dist - params.lastError3
 
     params.integral3 = params.integral3 + dist * params.integralInc
