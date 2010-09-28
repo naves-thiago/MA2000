@@ -25,7 +25,7 @@ function init()
   params.timerAdc = 2
   params.pwm_clock = 4000
   params.integralInc = 0.10
-  params.integralMax = 45
+  params.integralMax = 40
 
   -- Motor 3
   params.max3 = 348

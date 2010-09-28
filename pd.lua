@@ -8,7 +8,7 @@
 
 --local trashHold = 35
 --local trashHold = 70
-local trashHold = 10
+local trashHold = 30
 local params = {}
 local btn = 0
 local kit = require( pd.board() )

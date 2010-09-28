@@ -5,7 +5,7 @@ unset log                              # remove any log-scaling
 unset label                            # remove any previous labels
 set xtic auto                          # set xtics
 set ytic auto
-set xrange [-5:898];set yrange [-158:307];set multiplot;
+set xrange [-5:1323];set yrange [-254:279];set multiplot;
 set origin 0.0,0.0;
 plot "out.txt" with lines lt 1 linecolor rgb "red";
 set origin 0.0,0.0;
