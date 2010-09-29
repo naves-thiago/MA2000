@@ -6,13 +6,13 @@
 --         By Thiago Naves, Led Lab, PUC-Rio            --
 ----------------------------------------------------------
 
---local trashHold = 35
---local trashHold = 70
 local trashHold = 30
+local sqrtTH = math.sqrt( trashHold )
 local params = {}
 local btn = 0
 local kit = require( pd.board() )
 local count = 0
+local on
 
 -- Initializes the ADC and set parameters
 function init()
@@ -25,7 +25,7 @@ function init()
   params.timerAdc = 2
   params.pwm_clock = 4000
   params.integralInc = 0.10
-  params.integralMax = 40
+  params.integralMax = 10 -- 40
 
   -- Motor 3
   params.max3 = 348
@@ -42,8 +42,10 @@ function init()
   params.integral3 = 0
   params.derivative3 = 0
   params.kd3 = 55 --- MAX: 60
-  params.ke3 = 3
-  params.ki3 = 0.35
+--  params.ke3 = 3
+  params.ke3 = 4
+--  params.ki3 = 0.35
+  params.ki3 = 0.55
 
   -- ADC 0
   ADCConfig( 3 )
@@ -59,7 +61,7 @@ function init()
 
   -- Run
 --  run()
-
+  on = 0
   params.log = io.open( "/mmc/log.txt", "w" ) -- objective, pos, error, out
 end
 
@@ -114,13 +116,20 @@ function calcSpeed( motor )
       return 100
     end
   else
-    tmp = params[ "ke"..motor ] * params[ "lastError"..motor ]
+--    tmp = params[ "ke"..motor ] * params[ "lastError"..motor ]
+--    
+    if absDist > 7 then
+      params[ "integral"..motor ] = 0
+    end
+
+    tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
+    tmp = params[ "ke"..motor ] * tmp * ( params[ "lastError"..motor ] / absDist )
     tmp = tmp + params[ "ki"..motor ] * params[ "integral"..motor ]
     tmp = tmp + params[ "kd"..motor ] * params[ "derivative"..motor ]
   end
 
   if count == 0 then
-    params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, params.pos3, params.lastError3, tmp ) )
+    params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, params.pos3, params.lastError3, math.min( 100, math.max( -100, tmp ))))
   end
 
   if count < 9 then
@@ -151,6 +160,10 @@ function out( motor, value )
 
   pwmp = params[ "pwm" .. motor ]
   
+  if on == 0 then
+    value = 0
+  end
+
   if value == 0 then
     pwm.stop( pwmp )
   else
@@ -188,14 +201,22 @@ function run()
     key = term.getchar( term.NOWAIT )
     if key == term.KC_ESC then
       params.log:close()
+      print( "OK" )
       break
     end
     if key == term.KC_ENTER then
-      params.objective3 = params.pos3
+      if on == 0 then
+        params.objective3 = params.pos3
+        on = 1
+      else
+        params.objective3 = params.objective3 + 20
+      end
+
       params.integral3 = 0
       params.lastError3 = 0
       params.derivative3 = 0
-      params.objective3 = params.objective3 + 20
+
+      print( "OK" )
     end
 
     -- Get sample
