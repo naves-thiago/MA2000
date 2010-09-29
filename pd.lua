@@ -160,10 +160,6 @@ function out( motor, value )
 
   pwmp = params[ "pwm" .. motor ]
   
-  if on == 0 then
-    value = 0
-  end
-
   if value == 0 then
     pwm.stop( pwmp )
   else
@@ -247,7 +243,11 @@ function run()
       if kit.btn_pressed( kit.BTN_LEFT ) then
         out( 3, -100 )
       else
-        out( 3, calcSpeed( 3 ) )
+        if on == 0 then
+          out( 3, 0 )
+        else
+          out( 3, calcSpeed( 3 ) )
+        end
       end
     end
    --]]
