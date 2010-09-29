@@ -118,10 +118,6 @@ function calcSpeed( motor )
   else
 --    tmp = params[ "ke"..motor ] * params[ "lastError"..motor ]
 --    
-    if absDist > 7 then
-      params[ "integral"..motor ] = 0
-    end
-
     tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
     tmp = params[ "ke"..motor ] * tmp * ( params[ "lastError"..motor ] / absDist )
     tmp = tmp + params[ "ki"..motor ] * params[ "integral"..motor ]

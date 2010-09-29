@@ -45,7 +45,7 @@ function init()
 --  params.ke3 = 3
   params.ke3 = 4
 --  params.ki3 = 0.35
-  params.ki3 = 0.55
+  params.ki3 = 1.3
 
   -- ADC 0
   ADCConfig( 3 )
