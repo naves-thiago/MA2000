@@ -25,7 +25,7 @@ function init()
   params.timerAdc = 2
   params.pwm_clock = 4000
   params.integralInc = 0.10
-  params.integralMax = 10 -- 40
+  params.integralMax = 9 -- 40
 
   -- Motor 3
   params.max3 = 348
@@ -45,7 +45,7 @@ function init()
 --  params.ke3 = 3
   params.ke3 = 4
 --  params.ki3 = 0.35
-  params.ki3 = 0.55
+  params.ki3 = 1.3
 
   -- ADC 0
   ADCConfig( 3 )
@@ -250,37 +250,8 @@ function run()
         end
       end
     end
-   --]]
---   out( 3, calcSpeed( 3 ) )
-    
---[[        
-    -- Read buttons
-    if kit.btn_pressed( kit.BTN_RIGHT ) then
-      if btn ~= 1 then
-        btn = 1
-        params.objective3 = math.min( 200, params.objective3 + 10 )
-      end
-    else
-      if kit.btn_pressed( kit.BTN_LEFT ) then
-        if btn ~= 2 then
-          btn = 2
-          params.objective3 = math.max( 0, params.objective3 - 10 )
-        end
-      else
-        btn = 0
-      end
-    end  
-    --]]
   end
 end
 
 init()
 run()
---[[
-tmr.delay( params.timer, 2000000 )
-out( 3, 100 )
-tmr.delay( params.timer, 2000000 )
-out( 3, -100 )
-tmr.delay( params.timer, 2000000 )
-out( 3, 0 )
---]]
