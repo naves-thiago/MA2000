@@ -25,7 +25,7 @@ function init()
   params.timerAdc = 2
   params.pwm_clock = 4000
   params.integralInc = 0.10
-  params.integralMax = 9 -- 40
+  params.integralMax = 9
 
   -- Motor 3
   params.max3 = 348
@@ -36,11 +36,12 @@ function init()
   params.dir3 = pio.PC_7
   params.ndir3 = pio.PC_5
 
-  -- PID 3
+  -- CTRL 3
   params.lastError3 = 0
   params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
+  params.ks = 1
 
   -- ADC 0
   ADCConfig( 3 )
@@ -66,9 +67,15 @@ function ADCConfig( id )
 end
 
 -- Returns a position for a given adc value
-function adcToPos( max, min, val )
+function adcToPos( motor )
+  local max, min, val
+
+  max = params[ "max"..motor ]
+  min = params[ "min"..motor ]
+  val = adc.getsample( motor )
+  
   if val == nil then
-    return nil
+    val = params[ "pos"..motor ]
   end
 
   return ( val - min ) * 200 / ( max - min )
@@ -82,17 +89,82 @@ end
 -- Returns the distance between the current position and destination
 -- Sign represents direction
 function distance( motor )
-  local p
-  p = adcToPos( params[ "max"..motor ], params[ "min"..motor], adc.getsample( motor ) )
-  if p == nil then
-    p = params[ "pos" .. motor ]
-  else
-    params[ "pos" .. motor ] = p
-  end
-  
---  print( p )
-
-  return params[ "objective" .. motor ] - p
+  return params[ "objective" .. motor ] - adcToPos( motor )
 end
 
+function expSpeed( motor )
+  local tmp
+  tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
+  tmp = params[ "ke"..motor ] * tmp * ( params[ "lastError"..motor ] / absDist )
+  tmp = tmp + params[ "ki"..motor ] * params[ "integral"..motor ]
+
+  return tmp
+end
+
+function run()
+  local pos, speed, dir, es
+
+  while true do
+    -- Get sample
+    if adc.isdone( 3 ) == 1 then
+      adc.sample( 3, params.buffer )
+    end
+
+    es = expSpeed( 3 )
+    out( 3, es )
+
+    pos = adcToPos( 3 )
+    speed = pos - params[ "pos"..motor ]
+    dir = speed / math.abs( speed )
+    speed = math.abs( speed )
+
+    if speed < es then
+      params[ "integral"..motor ] = params[ "integral"..motor ] + params.integralInc
+    else
+      if speed > es then
+        params[ "integral"..motor ] = params[ "integral"..motor ] - params.integralInc
+    end
+  end
+end
+
+-- Sets pwm and direction pin values
+function out( motor, value )
+  local pwmp, dirp, ndirp -- PWM and Direction pins
+  local pwm_val = math.abs( value )
+
+--  print( value )
+
+  if pwm_val >= 100 then
+    pwm_val = 99
+  end
+
+  pwmp = params[ "pwm" .. motor ]
+  
+  if value == 0 then
+    pwm.stop( pwmp )
+  else
+    dirp = params[ "dir" .. motor ]
+    ndirp = params[ "ndir" .. motor ]
+
+    -- Sets direction pins
+    -- Avoid shotcut
+    if ( value > 0 ) ~= ( pio.pin.getval( dirp ) == 1 ) then -- Changed Direction
+      pwm.stop( pwmp )
+      tmr.delay( params.timer, 1000 )
+
+      -- Set pins
+      if value > 0 then
+        pio.pin.sethigh( dirp )
+        pio.pin.setlow( ndirp )
+      else
+        pio.pin.setlow( dirp )
+        pio.pin.sethigh( ndirp )
+      end
+    end
+
+    -- Sets PWM
+    pwm.setup( pwmp, params.pwm_clock, pwm_val )
+    pwm.start( pwmp )
+  end
+end
 
