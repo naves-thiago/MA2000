@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------------
-Gerber File Extension Report For: H-Bridge.GBR   12/09/2010  01:08:29
+Gerber File Extension Report For: H-Bridge.GBR   10/1/2010  5:58:01 PM
 ------------------------------------------------------------------------------------------
 
 
@@ -9,8 +9,6 @@ Layer Extension     Layer Description
 .GTL                Top Layer                               
 .GBL                Bottom Layer                            
 .GTO                Top Overlay                             
-.GTP                Top Paste                               
 .GTS                Top Solder                              
 .GBS                Bottom Solder                           
-.GBP                Bottom Paste                            
 ------------------------------------------------------------------------------------------

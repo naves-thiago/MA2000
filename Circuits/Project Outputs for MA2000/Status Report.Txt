@@ -4,16 +4,14 @@ From  : Project [MA2000.PrjPCB]
    Generated File[H-Bridge.GTL]
    Generated File[H-Bridge.GBL]
    Generated File[H-Bridge.GTO]
-   Generated File[H-Bridge.GTP]
    Generated File[H-Bridge.GTS]
    Generated File[H-Bridge.GBS]
-   Generated File[H-Bridge.GBP]
    Generated File[H-Bridge.RUL]
    Generated File[H-Bridge.EXTREP]
    Generated File[H-Bridge.REP]
 
 
-Files Generated   : 10
+Files Generated   : 8
 Documents Printed : 0
 
-Finished Output Generation At 01:08:29 On 12/09/2010
+Finished Output Generation At 5:58:01 PM On 10/1/2010
