@@ -92,13 +92,19 @@ function distance( motor )
   return params[ "objective" .. motor ] - adcToPos( motor )
 end
 
+function expDir( motor )
+  return params[ "lastError"..motor ] / math.abs( params[ "lastError"..motor ] )
+end
+
 function expSpeed( motor )
   local tmp
   tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
-  tmp = params[ "ke"..motor ] * tmp * ( params[ "lastError"..motor ] / absDist )
-  tmp = tmp + params[ "ki"..motor ] * params[ "integral"..motor ]
+  tmp = params[ "ke"..motor ] * tmp * expDir( motor )
+  return tmp;
+end
 
-  return tmp
+function calcOut( motor )
+  return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor )
 end
 
 function run()
@@ -110,19 +116,19 @@ function run()
       adc.sample( 3, params.buffer )
     end
 
-    es = expSpeed( 3 )
-    out( 3, es )
+    out( 3, calcOut( 3 ) )
 
+    es = expSpeed( 3 )
     pos = adcToPos( 3 )
     speed = pos - params[ "pos"..motor ]
     dir = speed / math.abs( speed )
     speed = math.abs( speed )
 
     if speed < es then
-      params[ "integral"..motor ] = params[ "integral"..motor ] + params.integralInc
+      params[ "integral"..motor ] = math.min( params.integralMax, params[ "integral"..motor ] + params.integralInc )
     else
       if speed > es then
-        params[ "integral"..motor ] = params[ "integral"..motor ] - params.integralInc
+        params[ "integral"..motor ] = math.max( 0, params[ "integral"..motor ] - params.integralInc )
     end
   end
 end
