@@ -41,7 +41,8 @@ function init()
   params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
-  params.ks = 1
+  params.ke3 = 4
+  params.ki3 = 2
 
   -- ADC 0
   ADCConfig( 3 )
@@ -75,7 +76,7 @@ function adcToPos( motor )
   val = adc.getsample( motor )
   
   if val == nil then
-    val = params[ "pos"..motor ]
+    return params[ "pos"..motor ]
   end
 
   return ( val - min ) * 200 / ( max - min )
@@ -98,38 +99,98 @@ end
 
 function expSpeed( motor )
   local tmp
-  tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
-  tmp = params[ "ke"..motor ] * tmp * expDir( motor )
+
+  if math.abs( params[ "lastError"..motor ] ) >= trashHold then
+    tmp = 100 * expDir( motor )
+  else
+    tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
+    tmp = params[ "ke"..motor ] * tmp * expDir( motor )
+  end
+
   return tmp;
 end
 
 function calcOut( motor )
-  return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor )
+    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor )
 end
 
 function run()
-  local pos, speed, dir, es
+  local pos, speed, dir, es, tmp
 
   while true do
+    -- Hit ESC to stop
+    key = term.getchar( term.NOWAIT )
+    if key == term.KC_ESC then
+      params.log:close()
+      print( "OK" )
+      break
+    end
+    if key == term.KC_ENTER then
+      if on == 0 then
+        params.objective3 = params.pos3
+        on = 1
+      else
+        params.objective3 = params.objective3 + 20
+      end
+
+      params.integral3 = 0
+      params.lastError3 = 0
+      params.derivative3 = 0
+      params.lastSpeed3 = 0
+
+      print( "OK" )
+    end
+
     -- Get sample
     if adc.isdone( 3 ) == 1 then
       adc.sample( 3, params.buffer )
     end
 
-    out( 3, calcOut( 3 ) )
+    tmp = calcOut( 3 )
+    out( 3, tmp )
 
-    es = expSpeed( 3 )
+    if count == 0 then
+      params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, params.pos3, params.lastError3, math.min( 100, math.max( -100, tmp ))))
+      print( string.format( "%02d   %02d   %02d", params.ke3 * params[ "lastError3" ], params.ki3 * params[ "integral3" ], tmp ) )  
+    end
+
+    if count < 9 then
+      count = count + 1
+    else
+      count = 0
+    end
+
     pos = adcToPos( 3 )
-    speed = pos - params[ "pos"..motor ]
+    params[ "lastError3" ] = distance( 3 )
+    es = expSpeed( 3 )
+    speed = pos - params[ "pos3" ]
+    params[ "pos3" ] = pos
     dir = speed / math.abs( speed )
     speed = math.abs( speed )
 
     if speed < es then
-      params[ "integral"..motor ] = math.min( params.integralMax, params[ "integral"..motor ] + params.integralInc )
+      params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
     else
       if speed > es then
-        params[ "integral"..motor ] = math.max( 0, params[ "integral"..motor ] - params.integralInc )
+        params[ "integral3" ] = math.max( 0, params[ "integral3" ] - params.integralInc )
+      end
     end
+
+    -- Manual control
+    if kit.btn_pressed( kit.BTN_RIGHT ) then
+      out( 3, 100 )
+    else
+      if kit.btn_pressed( kit.BTN_LEFT ) then
+        out( 3, -100 )
+      else
+        if on == 0 then
+          out( 3, 0 )
+        else
+          out( 3, calcOut( 3 ) )
+        end
+      end
+    end
+
   end
 end
 
@@ -138,14 +199,14 @@ function out( motor, value )
   local pwmp, dirp, ndirp -- PWM and Direction pins
   local pwm_val = math.abs( value )
 
---  print( value )
+  --  print( value )
 
   if pwm_val >= 100 then
     pwm_val = 99
   end
 
   pwmp = params[ "pwm" .. motor ]
-  
+
   if value == 0 then
     pwm.stop( pwmp )
   else
@@ -174,3 +235,5 @@ function out( motor, value )
   end
 end
 
+init()
+run()
