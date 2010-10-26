@@ -40,8 +40,8 @@ function init()
   params.lastError3 = 0
   params.lastSpeed3 = 0
   params.integral3 = 0
-  params.derivative3 = 0
-  params.ke3 = 4
+  params.derivative3 = 55
+  params.ke3 = 3.5
   params.ki3 = 2
 
   -- ADC 0
@@ -57,6 +57,7 @@ function init()
   pwm.stop( params.pwm3 )
 
   on = 0
+  out( 3, 0 )
   params.log = io.open( "/mmc/log.txt", "w" ) -- objective, pos, error, out
 end
 
@@ -121,6 +122,7 @@ function run()
     -- Hit ESC to stop
     key = term.getchar( term.NOWAIT )
     if key == term.KC_ESC then
+      out( 3, 0 )
       params.log:close()
       print( "OK" )
       break
@@ -147,7 +149,6 @@ function run()
     end
 
     tmp = calcOut( 3 )
-    out( 3, tmp )
 
     if count == 0 then
       params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, params.pos3, params.lastError3, math.min( 100, math.max( -100, tmp ))))
@@ -190,7 +191,6 @@ function run()
         end
       end
     end
-
   end
 end
 
