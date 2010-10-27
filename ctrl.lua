@@ -6,7 +6,7 @@
 --         By Thiago Naves, Led Lab, PUC-Rio            --
 ----------------------------------------------------------
 
-local trashHold = 30
+local trashHold = 30 -- 30
 local sqrtTH = math.sqrt( trashHold )
 local params = {}
 local btn = 0
@@ -24,12 +24,12 @@ function init()
   params.timer = 1
   params.timerAdc = 2
   params.pwm_clock = 4000
-  params.integralInc = 0.10
-  params.integralMax = 9
+  params.integralInc = 0.30
+  params.integralMax = 5
 
   -- Motor 3
-  params.max3 = 348
-  params.min3 = 163
+  params.max3 = 636
+  params.min3 = 220
   params.pos3 = 78
   params.objective3 = 78
   params.pwm3 = 5
@@ -40,9 +40,10 @@ function init()
   params.lastError3 = 0
   params.lastSpeed3 = 0
   params.integral3 = 0
-  params.derivative3 = 55
-  params.ke3 = 3.5
-  params.ki3 = 2
+  params.derivative3 = 0
+  params.ke3 = 15 -- 3.5
+  params.ki3 = 2.5 -- 2
+  params.kd3 = 50
 
   -- ADC 0
   ADCConfig( 3 )
@@ -112,7 +113,7 @@ function expSpeed( motor )
 end
 
 function calcOut( motor )
-    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor )
+    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor ) + params[ "kd"..motor ] * params[ "derivative"..motor ]
 end
 
 function run()
@@ -162,6 +163,7 @@ function run()
     end
 
     pos = adcToPos( 3 )
+    params[ "derivative3" ] = distance( 3 ) - params[ "lastError3" ]
     params[ "lastError3" ] = distance( 3 )
     es = expSpeed( 3 )
     speed = pos - params[ "pos3" ]
@@ -173,7 +175,7 @@ function run()
       params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
     else
       if speed > es then
-        params[ "integral3" ] = math.max( 0, params[ "integral3" ] - params.integralInc )
+        params[ "integral3" ] = math.max( -params.integralMax, params[ "integral3" ] - params.integralInc )
       end
     end
 
