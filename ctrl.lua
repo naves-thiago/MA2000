@@ -12,6 +12,7 @@ local params = {}
 local btn = 0
 local kit = require( pd.board() )
 local count = 0
+local countSpeed = 0
 local on
 
 -- Initializes the ADC and set parameters
@@ -24,7 +25,8 @@ function init()
   params.timer = 1
   params.timerAdc = 2
   params.pwm_clock = 4000
-  params.integralInc = 0.30
+--  params.integralInc = 0.30
+  params.integralInc = 0.10
   params.integralMax = 5
 
   -- Motor 3
@@ -42,7 +44,8 @@ function init()
   params.integral3 = 0
   params.derivative3 = 0
   params.ke3 = 15 -- 3.5
-  params.ki3 = 2.5 -- 2
+--  params.ki3 = 2.5 -- 2
+  params.ki3 = 5
   params.kd3 = 50
 
   -- ADC 0
@@ -113,7 +116,7 @@ function expSpeed( motor )
 end
 
 function calcOut( motor )
-    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor ) + params[ "kd"..motor ] * params[ "derivative"..motor ]
+    return expSpeed( motor ) * expDir( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] + params[ "kd"..motor ] * params[ "derivative"..motor ]
 end
 
 function run()
@@ -153,7 +156,6 @@ function run()
 
     if count == 0 then
       params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, params.pos3, params.lastError3, math.min( 100, math.max( -100, tmp ))))
-      print( string.format( "%02d   %02d   %02d", params.ke3 * params[ "lastError3" ], params.ki3 * params[ "integral3" ], tmp ) )  
     end
 
     if count < 9 then
@@ -162,14 +164,25 @@ function run()
       count = 0
     end
 
-    pos = adcToPos( 3 )
+    if countSpeed == 0 then
+      pos = adcToPos( 3 )
+      speed = pos - params[ "pos3" ]
+      params[ "pos3" ] = pos
+      dir = speed / math.abs( speed )
+      speed = math.abs( speed )
+    end
+
+    if count < 39 then
+      count = count + 1
+    else
+      count = 0
+    end
+
     params[ "derivative3" ] = distance( 3 ) - params[ "lastError3" ]
     params[ "lastError3" ] = distance( 3 )
     es = expSpeed( 3 )
-    speed = pos - params[ "pos3" ]
-    params[ "pos3" ] = pos
-    dir = speed / math.abs( speed )
-    speed = math.abs( speed )
+
+    print( string.format( "%02d\t%02d\t%02d\t%02d", speed, es, params[ "integral3" ] * params[ "ki3" ], tmp ) )
 
     if speed < es then
       params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
