@@ -116,7 +116,7 @@ function expSpeed( motor )
 end
 
 function calcOut( motor )
-    return expSpeed( motor ) * expDir( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] + params[ "kd"..motor ] * params[ "derivative"..motor ]
+    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] + params[ "kd"..motor ] * params[ "derivative"..motor ]
 end
 
 function run()
@@ -172,10 +172,10 @@ function run()
       speed = math.abs( speed )
     end
 
-    if count < 39 then
-      count = count + 1
+    if countSpeed < 59 then
+      countSpeed = countSpeed + 1
     else
-      count = 0
+      countSpeed = 0
     end
 
     params[ "derivative3" ] = distance( 3 ) - params[ "lastError3" ]
