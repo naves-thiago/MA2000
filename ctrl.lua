@@ -6,7 +6,7 @@
 --         By Thiago Naves, Led Lab, PUC-Rio            --
 ----------------------------------------------------------
 
-local trashHold = 30 -- 30
+local trashHold = 300 -- 30
 local sqrtTH = math.sqrt( trashHold )
 local params = {}
 local btn = 0
@@ -26,7 +26,8 @@ function init()
   params.timerAdc = 2
   params.pwm_clock = 4000
 --  params.integralInc = 0.30
-  params.integralInc = 0.10
+--  params.integralInc = 0.10
+  params.integralInc = 1
   params.integralMax = 5
 
   -- Motor 3
@@ -43,10 +44,10 @@ function init()
   params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
-  params.ke3 = 15 -- 3.5
+  params.ke3 = 5 -- 3.5
 --  params.ki3 = 2.5 -- 2
-  params.ki3 = 5
-  params.kd3 = 50
+  params.ki3 = 7
+  params.kd3 = 30 --50
 
   -- ADC 0
   ADCConfig( 3 )
@@ -176,7 +177,7 @@ function run()
       speed = math.abs( speed )
     end
 
-    if countSpeed < 99 then
+    if countSpeed < 200 then
       countSpeed = countSpeed + 1
     else
       countSpeed = 0
