@@ -7,7 +7,8 @@
 ----------------------------------------------------------
 
 local trashHold = 300 -- 30
-local sqrtTH = math.sqrt( trashHold )
+--local sqrtTH = math.sqrt( trashHold )
+local sqrtTH = math.sqrt( 40 )
 local params = {}
 local btn = 0
 local kit = require( pd.board() )
@@ -44,10 +45,10 @@ function init()
   params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
-  params.ke3 = 5 -- 3.5
+  params.ke3 = 15 -- 3.5
 --  params.ki3 = 2.5 -- 2
   params.ki3 = 7
-  params.kd3 = 30 --50
+  params.kd3 = 40 --50
 
   -- ADC 0
   ADCConfig( 3 )
@@ -109,7 +110,7 @@ function expSpeed( motor )
   if math.abs( params[ "lastError"..motor ] ) >= trashHold then
     tmp = 100 * expDir( motor )
   else
-    tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
+    tmp = math.pow( ( params[ "lastError"..motor ] / 40 ) * sqrtTH, 2 )
     tmp = params[ "ke"..motor ] * tmp * expDir( motor )
   end
 
