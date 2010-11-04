@@ -164,6 +164,10 @@ function run()
       count = 0
     end
 
+    params[ "derivative3" ] = distance( 3 ) - params[ "lastError3" ]
+    params[ "lastError3" ] = distance( 3 )
+    es = expSpeed( 3 ) / 7
+
     if countSpeed == 0 then
       pos = adcToPos( 3 )
       speed = pos - params[ "pos3" ]
@@ -172,25 +176,20 @@ function run()
       speed = math.abs( speed )
     end
 
-    if countSpeed < 59 then
+    if countSpeed < 99 then
       countSpeed = countSpeed + 1
     else
       countSpeed = 0
-    end
-
-    params[ "derivative3" ] = distance( 3 ) - params[ "lastError3" ]
-    params[ "lastError3" ] = distance( 3 )
-    es = expSpeed( 3 )
-
-    print( string.format( "%02d\t%02d\t%02d\t%02d", speed, es, params[ "integral3" ] * params[ "ki3" ], tmp ) )
-
-    if speed < es then
-      params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
-    else
-      if speed > es then
-        params[ "integral3" ] = math.max( -params.integralMax, params[ "integral3" ] - params.integralInc )
+      if speed < es then
+        params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
+      else
+        if speed > es then
+          params[ "integral3" ] = math.max( -params.integralMax, params[ "integral3" ] - params.integralInc )
+        end
       end
     end
+
+    print( string.format( "%02d\t%02d\t%02d\t%02d", speed, es, params[ "integral3" ] * params[ "ki3" ], tmp ) )
 
     -- Manual control
     if kit.btn_pressed( kit.BTN_RIGHT ) then
