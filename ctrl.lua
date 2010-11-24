@@ -8,6 +8,7 @@
 
 local trashHold = 300 -- 30
 --local sqrtTH = math.sqrt( trashHold )
+local sqrtTH = 10 
 local sqrtTH = math.sqrt( 40 )
 local params = {}
 local btn = 0
@@ -41,14 +42,14 @@ function init()
   params.ndir3 = pio.PC_5
 
   -- CTRL 3
+  params.posSpeed3 = 78
   params.lastError3 = 0
   params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
-  params.ke3 = 15 -- 3.5
---  params.ki3 = 2.5 -- 2
-  params.ki3 = 7
-  params.kd3 = 40 --50
+  params.ke3 = 10 -- 15 -- 3.5
+  params.ki3 = 0 -- -7
+  params.kd3 = 0 --40 --50
 
   -- ADC 0
   ADCConfig( 3 )
@@ -84,6 +85,8 @@ function adcToPos( motor )
   
   if val == nil then
     return params[ "pos"..motor ]
+  else
+    params[ "pos"..motor ]  = val
   end
 
   return ( val - min ) * 200 / ( max - min )
@@ -98,6 +101,7 @@ end
 -- Sign represents direction
 function distance( motor )
   return params[ "objective" .. motor ] - adcToPos( motor )
+--  return params[ "objective" .. motor ] - params[ "pos" .. motor ]
 end
 
 function expDir( motor )
@@ -110,7 +114,7 @@ function expSpeed( motor )
   if math.abs( params[ "lastError"..motor ] ) >= trashHold then
     tmp = 100 * expDir( motor )
   else
-    tmp = math.pow( ( params[ "lastError"..motor ] / 40 ) * sqrtTH, 2 )
+    tmp = math.pow( ( params[ "lastError"..motor ] / 100 ) * sqrtTH, 2 )
     tmp = params[ "ke"..motor ] * tmp * expDir( motor )
   end
 
@@ -156,24 +160,14 @@ function run()
 
     tmp = calcOut( 3 )
 
-    if count == 0 then
-      params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, params.pos3, params.lastError3, math.min( 100, math.max( -100, tmp ))))
-    end
-
-    if count < 9 then
-      count = count + 1
-    else
-      count = 0
-    end
-
     params[ "derivative3" ] = distance( 3 ) - params[ "lastError3" ]
     params[ "lastError3" ] = distance( 3 )
     es = expSpeed( 3 ) / 7
 
     if countSpeed == 0 then
       pos = adcToPos( 3 )
-      speed = pos - params[ "pos3" ]
-      params[ "pos3" ] = pos
+      speed = pos - params[ "posSpeed3" ]
+      params[ "posSpeed3" ] = pos
       dir = speed / math.abs( speed )
       speed = math.abs( speed )
     end
@@ -189,6 +183,16 @@ function run()
           params[ "integral3" ] = math.max( -params.integralMax, params[ "integral3" ] - params.integralInc )
         end
       end
+    end
+
+    if count == 0 then
+      params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, adcToPos(3), params.lastError3, math.min( 100, math.max( -100, tmp ))))
+    end
+
+    if count < 9 then
+      count = count + 1
+    else
+      count = 0
     end
 
     print( string.format( "%02d\t%02d\t%02d\t%02d", speed, es, params[ "integral3" ] * params[ "ki3" ], tmp ) )
