@@ -6,14 +6,12 @@
 --         By Thiago Naves, Led Lab, PUC-Rio            --
 ----------------------------------------------------------
 
-local trashHold = 300 -- 30
---local sqrtTH = math.sqrt( trashHold )
-local sqrtTH = math.sqrt( 40 )
+local trashHold = 30
+local sqrtTH = math.sqrt( trashHold )
 local params = {}
 local btn = 0
 local kit = require( pd.board() )
 local count = 0
-local countSpeed = 0
 local on
 
 -- Initializes the ADC and set parameters
@@ -26,14 +24,12 @@ function init()
   params.timer = 1
   params.timerAdc = 2
   params.pwm_clock = 4000
---  params.integralInc = 0.30
---  params.integralInc = 0.10
-  params.integralInc = 1
-  params.integralMax = 5
+  params.integralInc = 0.10
+  params.integralMax = 9
 
   -- Motor 3
-  params.max3 = 636
-  params.min3 = 220
+  params.max3 = 348
+  params.min3 = 163
   params.pos3 = 78
   params.objective3 = 78
   params.pwm3 = 5
@@ -45,10 +41,8 @@ function init()
   params.lastSpeed3 = 0
   params.integral3 = 0
   params.derivative3 = 0
-  params.ke3 = 15 -- 3.5
---  params.ki3 = 2.5 -- 2
-  params.ki3 = 7
-  params.kd3 = 40 --50
+  params.ke3 = 4
+  params.ki3 = 2
 
   -- ADC 0
   ADCConfig( 3 )
@@ -63,7 +57,6 @@ function init()
   pwm.stop( params.pwm3 )
 
   on = 0
-  out( 3, 0 )
   params.log = io.open( "/mmc/log.txt", "w" ) -- objective, pos, error, out
 end
 
@@ -110,7 +103,7 @@ function expSpeed( motor )
   if math.abs( params[ "lastError"..motor ] ) >= trashHold then
     tmp = 100 * expDir( motor )
   else
-    tmp = math.pow( ( params[ "lastError"..motor ] / 40 ) * sqrtTH, 2 )
+    tmp = math.pow( ( params[ "lastError"..motor ] / 30 ) * sqrtTH, 2 )
     tmp = params[ "ke"..motor ] * tmp * expDir( motor )
   end
 
@@ -118,17 +111,26 @@ function expSpeed( motor )
 end
 
 function calcOut( motor )
-    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] + params[ "kd"..motor ] * params[ "derivative"..motor ]
+    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor )
 end
 
 function run()
-  local pos, speed, dir, es, tmp
+  local pos, speed, dir, es, tmp, objs, obja, sel_a
+
+  sel_a = 0
+  obja = 0
+  objs = {}
+  objs[0] = 70
+  objs[1] = 90
+  objs[2] = 100
+  objs[3] = 150
+  objs[4] = 190
+  objs[5] = 180
 
   while true do
     -- Hit ESC to stop
     key = term.getchar( term.NOWAIT )
     if key == term.KC_ESC then
-      out( 3, 0 )
       params.log:close()
       print( "OK" )
       break
@@ -158,6 +160,7 @@ function run()
 
     if count == 0 then
       params.log:write( string.format( "%d\t%d\t%d\t%d\n", params.objective3, params.pos3, params.lastError3, math.min( 100, math.max( -100, tmp ))))
+      print( string.format( "%02d   %02d   %02d", params.ke3 * params[ "lastError3" ], params.ki3 * params[ "integral3" ], tmp ) )  
     end
 
     if count < 9 then
@@ -166,32 +169,21 @@ function run()
       count = 0
     end
 
-    params[ "derivative3" ] = distance( 3 ) - params[ "lastError3" ]
+    pos = adcToPos( 3 )
     params[ "lastError3" ] = distance( 3 )
-    es = expSpeed( 3 ) / 7
+    es = expSpeed( 3 )
+    speed = pos - params[ "pos3" ]
+    params[ "pos3" ] = pos
+    dir = speed / math.abs( speed )
+    speed = math.abs( speed )
 
-    if countSpeed == 0 then
-      pos = adcToPos( 3 )
-      speed = pos - params[ "pos3" ]
-      params[ "pos3" ] = pos
-      dir = speed / math.abs( speed )
-      speed = math.abs( speed )
-    end
-
-    if countSpeed < 200 then
-      countSpeed = countSpeed + 1
+    if speed < es then
+      params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
     else
-      countSpeed = 0
-      if speed < es then
-        params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
-      else
-        if speed > es then
-          params[ "integral3" ] = math.max( -params.integralMax, params[ "integral3" ] - params.integralInc )
-        end
+      if speed > es then
+        params[ "integral3" ] = math.max( 0, params[ "integral3" ] - params.integralInc )
       end
     end
-
-    print( string.format( "%02d\t%02d\t%02d\t%02d", speed, es, params[ "integral3" ] * params[ "ki3" ], tmp ) )
 
     -- Manual control
     if kit.btn_pressed( kit.BTN_RIGHT ) then
@@ -200,6 +192,16 @@ function run()
       if kit.btn_pressed( kit.BTN_LEFT ) then
         out( 3, -100 )
       else
+        if  kit.btn_pressed( kit.BTN_SELECT ) then
+          if sel_a == 0 then
+            sel_a = 1
+            params.objective3 = objs[obja]
+            obja = ( obja + 1) % 6
+          else
+            sel_a = 0
+          end
+        end
+
         if on == 0 then
           out( 3, 0 )
         else
