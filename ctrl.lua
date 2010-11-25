@@ -111,7 +111,7 @@ function expSpeed( motor )
 end
 
 function calcOut( motor )
-    return expSpeed( motor ) + params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor )
+    return expSpeed( motor ) - params[ "ki"..motor ] * params[ "integral"..motor ] * expDir( motor )
 end
 
 function run()
@@ -181,7 +181,7 @@ function run()
       params[ "integral3" ] = math.min( params.integralMax, params[ "integral3" ] + params.integralInc )
     else
       if speed > es then
-        params[ "integral3" ] = math.max( 0, params[ "integral3" ] - params.integralInc )
+        params[ "integral3" ] = math.max( -params.integralMax, params[ "integral3" ] - params.integralInc )
       end
     end
 
